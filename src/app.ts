@@ -1,5 +1,8 @@
 import fastify from "fastify";
 import fastifyEnv from "@fastify/env";
+import cookie from "@fastify/cookie";
+import jwtPlugin from "./plugins/jwt.js";
+import authPlugin from "./plugins/auth.js";
 import cors from "@fastify/cors";
 import routes from "./routes/index.js";
 import { envSchema } from "./env.js";
@@ -17,6 +20,11 @@ export async function buildApp() {
             path: `.env.${process.env.NODE_ENV}`
         }
     });
+
+    await app.register(cookie);
+    await app.register(jwtPlugin);
+    await app.register(authPlugin);
+
     app.register(cors, {
         origin: [
             "http://localhost:5173",

@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import { query, execute } from "../plugins/db";
-import { ResultSetHeader } from "mysql2/promise";
 
 
 
@@ -26,13 +25,19 @@ export async function findUserByNickname(
     app: FastifyInstance,
     nickname: string
 ) {
-    const rows = await query<User>(
-        app,
-        `select * from user where nickname = ?`,
-        [ nickname ]
-    );
-
-    return rows[0] ?? null;
+    try {
+        const rows = await query<User>(
+            app,
+            `select * from user where nickname = ?`,
+            [ nickname ]
+        );
+    
+        return rows[0] ?? null;
+        
+    } catch (error: any) {
+        console.error(error);
+        return null;
+    }
 }
 
 
@@ -46,13 +51,19 @@ export async function findUserByID(
     app: FastifyInstance,
     id: string
 ) {
-    const rows = await query<User>(
-        app,
-        `select * from user where id = ?`,
-        [ id ]
-    );
-
-    return rows[0] ?? null;
+    try {
+        const rows = await query<User>(
+            app,
+            `select * from user where id = ?`,
+            [ id ]
+        );
+    
+        return rows[0] ?? null;
+        
+    } catch (error: any) {
+        console.error(error);
+        return null;
+    }
 }
 
 
@@ -66,20 +77,26 @@ export async function join(
     app: FastifyInstance,
     data: User
 ) {
-    const result = await execute(
-        app,
-        `
-            insert into user
-            (id, password, nickname, reg_dt)
-            values
-            (?, ?, ?, now())
-        `,
-        [
-            data.id,
-            data.password,
-            data.nickname
-        ]
-    );
-
-    return result.affectedRows === 1;
+    try {
+        const result = await execute(
+            app,
+            `
+                insert into user
+                (id, password, nickname, reg_dt)
+                values
+                (?, ?, ?, now())
+            `,
+            [
+                data.id,
+                data.password,
+                data.nickname
+            ]
+        );
+    
+        return result.affectedRows === 1;
+        
+    } catch (error: any) {
+        console.error(error);
+        return false;
+    }
 }

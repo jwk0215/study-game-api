@@ -45,11 +45,5 @@ export async function join(
     const hash = await bcrypt.hash(data.password, 12);
     data.password = hash;
     
-    try {
-        return await UserRepo.join(app, data);
-        
-    } catch (error: any) {
-        console.error(error);
-        return false;
-    }
+    return await UserRepo.join(app, data);
 }
