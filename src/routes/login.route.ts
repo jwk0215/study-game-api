@@ -70,14 +70,16 @@ export default async function loginRoutes(app: FastifyInstance) {
     app.post("/refresh", async (req, reply) => {
         try {
             const refreshToken = req.cookies.refresh_token;
-            console.log(req.cookies);
-            const payload = app.jwt.verify<{
-                nickname: string;
-            }>(refreshToken);
+            
+            const payload = app.jwt.verify<User>(refreshToken);
 
             const accessToken = app.jwt.sign(
                 {
-                    nickname: payload.nickname
+                    id: payload.id,
+                    nickname: payload.nickname,
+                    gem: payload.gem,
+                    c_type: payload.c_type,
+                    reg_data: payload.reg_data
                 },
                 { expiresIn: "15m" }
             );
@@ -98,6 +100,7 @@ export default async function loginRoutes(app: FastifyInstance) {
 
         } catch(error) {
             console.log(error);
+
             return reply.code(401)
             .clearCookie("access_token", { path: '/' })
             .clearCookie("refresh_token", { path: '/' })

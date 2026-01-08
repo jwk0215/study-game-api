@@ -1,25 +1,15 @@
 import { FastifyInstance } from "fastify";
 import * as UserRepo from "../repository/user.repository.js";
-import * as bcrypt from "bcrypt";
 
 
 
 
-/**
- * 로그인 (인증 및 토큰 발급)
- * @param app FastifyInstance
- * @param data id, password
- * @returns token ?? null
- */
-export async function login(
+export async function regCType(
     app: FastifyInstance,
     data: User
 ) {
+    await UserRepo.regCType(app, data);
     const user = await UserRepo.findUserByID(app, data.id);
-    if (!user) return null;
-
-    const result = await bcrypt.compare(data.password, user.password);
-    if (!result) return null;
 
     return {
         accessToken: app.jwt.sign(
@@ -41,13 +31,6 @@ export async function login(
                 reg_data: user.reg_data
             },
             { expiresIn: "14d" }
-        ),
-        user: {
-            id: user.id,
-            nickname: user.nickname,
-            gem: user.gem,
-            c_type: user.c_type,
-            reg_data: user.reg_data
-        }
+        )
     }
 }

@@ -4,17 +4,6 @@ import { query, execute } from "../plugins/db";
 
 
 
-
-export interface User {
-    id: string;
-    password: string;
-    nickname: string;
-    reg_data?: string;
-}
-
-
-
-
 /**
  * 닉네임으로 유저 찾기
  * @param app FastifyInstance
@@ -95,6 +84,34 @@ export async function join(
     
         return result.affectedRows === 1;
         
+    } catch (error: any) {
+        console.error(error);
+        return false;
+    }
+}
+
+
+
+export async function regCType(
+    app: FastifyInstance,
+    data: User
+) {
+    try {
+        const result = await execute(
+            app,
+            `
+                update user set
+                c_type = ?
+                where id = ?
+            `,
+            [
+                data.c_type,
+                data.id
+            ]
+        );
+
+        return result.affectedRows === 1;
+
     } catch (error: any) {
         console.error(error);
         return false;

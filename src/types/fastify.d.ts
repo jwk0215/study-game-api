@@ -1,5 +1,4 @@
 import "fastify";
-import { FastifyReply, FastifyRequest } from "fastify";
 import { Pool } from "mysql2/promise";
 
 
@@ -25,20 +24,14 @@ declare module "fastify" {
     }
 
     interface FastifyRequest {
-        user: {
-            nickname: string;
-        }
+        user: User;
     }
 }
 
 
 declare module "@fastify/jwt" {
     interface FastifyJWT {
-        payload: {
-            nickname: string;
-        };
-        user: {
-            nickname: string;
-        };
+        payload: User;
+        user: User;
     }
 }
